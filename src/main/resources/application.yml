@@ -1,9 +1,9 @@
 jwt:
   secret: secretKey
 hostname:
-  getUserByUserName: http://localhost:9098
+  userservice: http://localhost:9098
 path:
-  userservice: /v1/users
+  getUserByUserName: /v1/users
 logging:
   level:
     com:

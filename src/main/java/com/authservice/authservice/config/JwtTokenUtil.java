@@ -15,7 +15,7 @@ import java.util.Map;
 @Slf4j
 public class JwtTokenUtil {
 
-    public static final long JWT_TOKEN_VALIDITY = 1000 * 60 * 1000;
+    public static final long JWT_TOKEN_VALIDITY_MILLIS = 1000 * 60 * 1000;
 
     @Value("${jwt.secret}")
     private String secret;
@@ -42,7 +42,7 @@ public class JwtTokenUtil {
     private String doGenerateToken(Map<String, Object> claims, String subject) {
         log.info("Entering JwtTokenUtil.doGenerateToken with parameters claims {}, subject {}, {}", claims, subject, secret);
         return Jwts.builder().setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 10))
+                .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY_MILLIS))
                 .signWith(SignatureAlgorithm.HS512, secret).compact();
     }
 }

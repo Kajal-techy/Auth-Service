@@ -5,7 +5,6 @@ import com.authservice.authservice.model.JWTRequest;
 import com.authservice.authservice.model.JWTResponse;
 import com.authservice.authservice.service.UserDetailsServiceImpl;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,14 +21,17 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/v1")
 public class AuthenticationController {
 
-    @Autowired
     private AuthenticationManager authenticationManager;
 
-    @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
-    @Autowired
     private UserDetailsServiceImpl userDetailsServiceImpl;
+
+    public AuthenticationController(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, UserDetailsServiceImpl userDetailsServiceImpl) {
+        this.authenticationManager = authenticationManager;
+        this.jwtTokenUtil = jwtTokenUtil;
+        this.userDetailsServiceImpl = userDetailsServiceImpl;
+    }
 
     /**
      * This function is generating authentication token if user credentials are valid

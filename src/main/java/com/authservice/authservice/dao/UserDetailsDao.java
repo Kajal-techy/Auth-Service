@@ -13,10 +13,10 @@ public class UserDetailsDao {
 
     private RestTemplate restTemplate;
 
-    @Value("${hostname.getUserByUserName}")
+    @Value("${hostname.userservice}")
     private String hostname;
 
-    @Value("${path.userservice}")
+    @Value("${path.getUserByUserName}")
     private String path;
 
     UserDetailsDao(RestTemplate restTemplate) {
