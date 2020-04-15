@@ -1,6 +1,7 @@
 package com.authservice.authservice.config;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,8 +13,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 /* For creating one or ore new beans which need to be dealt at the runtime */
 @Configuration
@@ -21,21 +20,25 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableWebSecurity
 /* For securing our methods with java configuration */
 @EnableGlobalMethodSecurity(prePostEnabled = true)
+@Slf4j
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
+    private AuthServiceBeanInitializers authServiceBeanInitializers;
+
     private UserDetailsService userDetailsService;
-    @Autowired
+
     private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+
+    public WebSecurityConfig(UserDetailsService userDetailsService, JwtAuthenticationEntryPoint
+            jwtAuthenticationEntryPoint, AuthServiceBeanInitializers authServiceBeanInitializers) {
+        this.userDetailsService = userDetailsService;
+        this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
+        this.authServiceBeanInitializers = authServiceBeanInitializers;
+    }
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        auth.userDetailsService(userDetailsService).passwordEncoder(authServiceBeanInitializers.passwordEncoder());
     }
 
     @Bean
@@ -51,6 +54,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
+        log.info("Entering WebSecurityConfig.configure with parameter httpSecurity {}.", httpSecurity);
         httpSecurity.csrf().disable().authorizeRequests()
                 .antMatchers("/v1/authenticate").permitAll().anyRequest()
                 .authenticated().and().exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and()

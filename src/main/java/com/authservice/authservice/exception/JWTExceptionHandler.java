@@ -1,17 +1,17 @@
 package com.authservice.authservice.exception;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+@ControllerAdvice
+@Slf4j
 public class JWTExceptionHandler {
-
-    private static Logger logger = LoggerFactory.getLogger(JWTExceptionHandler.class);
 
     @ExceptionHandler(value = NotFoundException.class)
     public ResponseEntity<String> userNotFoundException(NotFoundException exception) {
-        logger.debug("Entering UserExceptionHandler.userNotFoundException with parameter exception {}.", exception);
+        log.info("Entering UserExceptionHandler.userNotFoundException with parameter exception {}.", exception);
         return ResponseEntity.badRequest().body(exception.toString());
     }
 }

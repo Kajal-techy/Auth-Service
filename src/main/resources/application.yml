@@ -3,10 +3,10 @@ jwt:
 hostname:
   getUserByUserName: http://localhost:9098
 path:
-  getUserByUserName: /v1/users
+  userservice: /v1/users
 logging:
   level:
     com:
-        userservice: DEBUG
+      userservice: DEBUG
     root: INFO
 
