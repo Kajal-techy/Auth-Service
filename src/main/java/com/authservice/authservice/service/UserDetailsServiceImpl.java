@@ -1,6 +1,7 @@
 package com.authservice.authservice.service;
 
 import com.authservice.authservice.dao.UserDetailsDao;
+import com.authservice.authservice.exception.NotFoundException;
 import com.authservice.authservice.model.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -31,9 +32,16 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
         log.info("Entering UserDetailsServiceImpl.loadUserByUsername with parameter userName {}.", userName);
         User user = userDetailsDao.getUserByUsername(userName);
-        if (user == null) {
+        if (user == null)
             throw new UsernameNotFoundException("User not found with username: " + userName);
-        }
         return new org.springframework.security.core.userdetails.User(user.getUserName(), user.getPassword(), new ArrayList<>());
+    }
+
+    public User loadUserDetails(String userName) throws NotFoundException {
+        log.info("Entering UserDetailsServiceImpl.loadUserDetails with parameter userName {}", userName);
+        User user = userDetailsDao.getUserByUsername(userName);
+        if (user == null)
+            throw new NotFoundException("User not found with username: " + userName);
+        return user;
     }
 }

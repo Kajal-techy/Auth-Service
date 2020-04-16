@@ -3,12 +3,12 @@ package com.authservice.authservice.controller;
 import com.authservice.authservice.config.JwtTokenUtil;
 import com.authservice.authservice.model.JWTRequest;
 import com.authservice.authservice.model.JWTResponse;
+import com.authservice.authservice.model.User;
 import com.authservice.authservice.service.UserDetailsServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -35,6 +35,7 @@ public class AuthenticationController {
 
     /**
      * This function is generating authentication token if user credentials are valid
+     *
      * @param authenticationRequest
      * @return
      * @throws Exception
@@ -43,13 +44,14 @@ public class AuthenticationController {
     public ResponseEntity<?> createAuthenticationToken(@RequestBody JWTRequest authenticationRequest) throws Exception {
         log.info("Entering AuthenticationController.createAuthenticationToken with Parameter authenticationRequest {}.", authenticationRequest.toString());
         authenticate(authenticationRequest.getUserName(), authenticationRequest.getPassword());
-        final UserDetails userDetails = userDetailsServiceImpl.loadUserByUsername(authenticationRequest.getUserName());
+        final User userDetails = userDetailsServiceImpl.loadUserDetails(authenticationRequest.getUserName());
         final String token = jwtTokenUtil.generateToken(userDetails);
         return ResponseEntity.ok(new JWTResponse(token));
     }
 
     /**
      * It will authenticate the request with userName and passsword
+     *
      * @param userName
      * @param password
      * @throws Exception
