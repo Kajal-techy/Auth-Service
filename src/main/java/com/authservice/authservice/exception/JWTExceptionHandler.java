@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class JWTExceptionHandler {
 
     @ExceptionHandler(value = NotFoundException.class)
-    public ResponseEntity<String> NotFoundException(NotFoundException exception) {
-        log.info("Entering UserExceptionHandler.NotFoundException with parameter exception {}.", exception);
+    public ResponseEntity<String> notFoundException(NotFoundException exception) {
+        log.info("Entering UserExceptionHandler.notFoundException with parameter exception {}.", exception);
         return ResponseEntity.badRequest().body(exception.toString());
     }
 }
