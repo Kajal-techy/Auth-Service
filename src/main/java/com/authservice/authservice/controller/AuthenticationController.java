@@ -9,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -47,6 +49,18 @@ public class AuthenticationController {
         final User userDetails = userDetailsServiceImpl.loadUserDetails(authenticationRequest.getUserName());
         final String token = jwtTokenUtil.generateToken(userDetails);
         return ResponseEntity.ok(new JWTResponse(token));
+    }
+
+    /**
+     * This function will validate the token and return the userId
+     *
+     * @return
+     */
+    @GetMapping("/validating_token")
+    public ResponseEntity<?> validatingToken() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = (User) auth.getPrincipal();
+        return ResponseEntity.ok("{\n" + "\"LoggedIn UserId\": " + "\"" + currentUser.getId() + "\"" + "\n}");
     }
 
     /**

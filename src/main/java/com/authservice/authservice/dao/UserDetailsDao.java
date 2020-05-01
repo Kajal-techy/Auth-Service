@@ -7,6 +7,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Slf4j
 @Repository
 public class UserDetailsDao {
@@ -30,12 +35,23 @@ public class UserDetailsDao {
      * @return User
      * @throws NotFoundException
      */
-    public User[] getUserByUsername(String userName) throws NotFoundException {
+    public List<User> getUserByUsername(String userName) throws NotFoundException {
         log.info("Entering UserDetailsDao.getUserByUsername with parameter userName {}.", userName);
+        Object[] userObjects;
         try {
-            User[] user = restTemplate.getForObject(hostname + path + "?" +
-                    "userName=" + userName, User[].class);
-            return user;
+            userObjects = restTemplate.getForObject(hostname + path + "?" +
+                    "userName=" + userName, Object[].class);
+
+            String id = ((LinkedHashMap) userObjects[0]).get("id").toString();
+            String firstName = ((LinkedHashMap) userObjects[0]).get("firstName").toString();
+            String lastName = ((LinkedHashMap) userObjects[0]).get("lastName").toString();
+            String username = ((LinkedHashMap) userObjects[0]).get("userName").toString();
+            String password = ((LinkedHashMap) userObjects[0]).get("password").toString();
+
+            List users = Arrays.asList(userObjects).stream().map(s -> new User(id, firstName, lastName, username, password)).collect(Collectors.toList());
+
+            return users;
+
         } catch (Exception e) {
             throw new NotFoundException("User Not Found : userName = " + userName);
         }

@@ -1,13 +1,13 @@
 package com.authservice.authservice.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Data
-public class User {
+import java.util.ArrayList;
+
+@Getter
+@Setter
+public class User extends org.springframework.security.core.userdetails.User {
 
     private String id;
 
@@ -19,6 +19,13 @@ public class User {
 
     private String password;
 
-    private Address address;
+    public User(String id, String firstName, String lastName, String userName, String password) {
+        super(userName, password, new ArrayList<>());
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.userName = userName;
+        this.password = password;
+    }
 }
 
