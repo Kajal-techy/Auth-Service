@@ -34,7 +34,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         List<User> users = userDetailsDao.getUserByUsername(userName);
         if (users == null || users.size() == 0)
             throw new UsernameNotFoundException("User not found with username: " + userName);
-        return new User(users.get(0).getId(), users.get(0).getFirstName(), users.get(0).getLastName(), users.get(0).getUserName(), users.get(0).getPassword());
+        return users.get(0);
     }
 
     public User loadUserDetails(String userName) throws NotFoundException {

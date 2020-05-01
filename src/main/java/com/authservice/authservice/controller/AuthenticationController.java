@@ -1,6 +1,7 @@
 package com.authservice.authservice.controller;
 
 import com.authservice.authservice.config.JwtTokenUtil;
+import com.authservice.authservice.model.AuthenticatedResponse;
 import com.authservice.authservice.model.JWTRequest;
 import com.authservice.authservice.model.JWTResponse;
 import com.authservice.authservice.model.User;
@@ -57,10 +58,10 @@ public class AuthenticationController {
      * @return
      */
     @GetMapping("/validating_token")
-    public ResponseEntity<?> validatingToken() {
+    public ResponseEntity<AuthenticatedResponse> validatingToken() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User currentUser = (User) auth.getPrincipal();
-        return ResponseEntity.ok("{\n" + "\"LoggedIn UserId\": " + "\"" + currentUser.getId() + "\"" + "\n}");
+        return ResponseEntity.ok().body(new AuthenticatedResponse(currentUser.getId()));
     }
 
     /**

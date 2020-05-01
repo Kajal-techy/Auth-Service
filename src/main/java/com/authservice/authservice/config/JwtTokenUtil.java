@@ -69,8 +69,13 @@ public class JwtTokenUtil {
         return getClaimFromToken(token, Claims::getSubject);
     }
 
-    public String getIdfromToken(String token) {
-        return getClaimFromToken(token, Claims::getId);
+    /**
+     * This function retrieve issuer name from the JWT token
+     * @param token
+     * @return
+     */
+    public String getIssuerFromToken(String token) {
+        return getClaimFromToken(token, Claims::getIssuer);
     }
 
     /**
@@ -110,6 +115,9 @@ public class JwtTokenUtil {
     }
 
     public Boolean validateToken(String token, UserDetails userDetails) {
-        return (!isTokenExpired(token));
+        String userNameToken = getUsernameFromToken(token);
+        String userNameUserDetails = userDetails.getUsername();
+        String issuerNameToken = getIssuerFromToken(token);
+        return (userNameToken.equals(userNameUserDetails) && (!isTokenExpired(token)) && (jwtIssuerName.equals(issuerNameToken)));
     }
 }

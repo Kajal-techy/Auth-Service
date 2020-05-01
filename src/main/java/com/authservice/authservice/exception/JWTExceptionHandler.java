@@ -14,5 +14,11 @@ public class JWTExceptionHandler {
         log.info("Entering UserExceptionHandler.notFoundException with parameter exception {}.", exception);
         return ResponseEntity.badRequest().body(exception.toString());
     }
+
+    @ExceptionHandler(value = DependencyFailedException.class)
+    public ResponseEntity<String> dependencyFailedException(DependencyFailedException exception) {
+        log.info("Entering UserExceptionHandler.dependencyFailedException with parameter exception {}.", exception);
+        return ResponseEntity.badRequest().body(exception.toString());
+    }
 }
 

@@ -26,9 +26,21 @@ public class AuthRequestFilter extends OncePerRequestFilter {
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
+    /**
+     * This function authenticate the request after request is intercepted by spring security interceptor
+     *
+     * @param request
+     * @param response
+     * @param chain
+     * @throws ServletException
+     * @throws IOException
+     * @throws IllegalArgumentException
+     * @throws ExpiredJwtException
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException, IllegalArgumentException, ExpiredJwtException {
+        log.info("Entering AuthRequestFilter.doFilterInternal with parameters request {}, response {}, chain {}", request, response, chain);
 
         final String requestTokenHeader = request.getHeader("Authorization");
 

@@ -1,11 +1,16 @@
 package com.authservice.authservice.dao;
 
+import com.authservice.authservice.exception.DependencyFailedException;
 import com.authservice.authservice.exception.NotFoundException;
 import com.authservice.authservice.model.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -39,21 +44,47 @@ public class UserDetailsDao {
         log.info("Entering UserDetailsDao.getUserByUsername with parameter userName {}.", userName);
         Object[] userObjects;
         try {
-            userObjects = restTemplate.getForObject(hostname + path + "?" +
-                    "userName=" + userName, Object[].class);
 
-            String id = ((LinkedHashMap) userObjects[0]).get("id").toString();
-            String firstName = ((LinkedHashMap) userObjects[0]).get("firstName").toString();
-            String lastName = ((LinkedHashMap) userObjects[0]).get("lastName").toString();
-            String username = ((LinkedHashMap) userObjects[0]).get("userName").toString();
-            String password = ((LinkedHashMap) userObjects[0]).get("password").toString();
+            String url = hostname + path;
 
-            List users = Arrays.asList(userObjects).stream().map(s -> new User(id, firstName, lastName, username, password)).collect(Collectors.toList());
+            UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(url)
+                    .queryParam("userName", userName);
 
+            ResponseEntity responseEntity = restTemplate.exchange(
+                    uriBuilder.toUriString(),
+                    HttpMethod.GET,
+                    null,
+                    Object[].class
+            );
+
+            userObjects = restTemplate.getForObject(hostname + path + "?" + "userName=" + userName, Object[].class);
+
+            List<User> users = null;
+            if (userObjects != null) {
+                users = Arrays.asList(userObjects).stream().map(s -> {
+                    LinkedHashMap response = (LinkedHashMap) s;
+                    checkNullOrEmpty(response.get("id"));
+                    checkNullOrEmpty(response.get("firstName"));
+                    checkNullOrEmpty(response.get("lastName"));
+                    checkNullOrEmpty(response.get("userName"));
+                    checkNullOrEmpty(response.get("password"));
+                    User userMapped = new User(response.get("id").toString(),
+                            response.get("firstName").toString(), response.get("lastName").toString(),
+                            response.get("userName").toString(), response.get("password").toString());
+                    return userMapped;
+                }).collect(Collectors.toList());
+            }
             return users;
-
         } catch (Exception e) {
-            throw new NotFoundException("User Not Found : userName = " + userName);
+            if (((HttpClientErrorException) e).getStatusCode().value() == 400)
+                throw new NotFoundException("User Not found with userName = " + userName);
+            else
+                throw new DependencyFailedException("Exception = " + e.getMessage());
         }
+    }
+
+    void checkNullOrEmpty(Object key) {
+        if (key == null || (key instanceof String && ((String) key).trim().isBlank()))
+            throw new DependencyFailedException(key + " is either null or empty");
     }
 }
