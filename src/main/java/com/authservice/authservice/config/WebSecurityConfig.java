@@ -48,7 +48,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     /**
-     * it specifies which request is allowed without authentication
+     * It specifies which request is allowed without authentication
      *
      * @param httpSecurity
      * @throws Exception

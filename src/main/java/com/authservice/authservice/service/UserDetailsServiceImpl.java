@@ -32,7 +32,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
         log.info("Entering UserDetailsServiceImpl.loadUserByUsername with parameter userName {}.", userName);
         User[] users = userDetailsDao.getUserByUsername(userName);
-        if (users == null && users.length == 0)
+        if (users == null || users.length == 0)
             throw new UsernameNotFoundException("User not found with username: " + userName);
         return new org.springframework.security.core.userdetails.User(users[0].getUserName(), users[0].getPassword(), new ArrayList<>());
     }
@@ -40,7 +40,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public User loadUserDetails(String userName) throws NotFoundException {
         log.info("Entering UserDetailsServiceImpl.loadUserDetails with parameter userName {}", userName);
         User[] users = userDetailsDao.getUserByUsername(userName);
-        if (users == null && users.length == 0)
+        if (users == null || users.length == 0)
             throw new NotFoundException("User not found with username: " + userName);
         return users[0];
     }
