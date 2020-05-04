@@ -30,11 +30,11 @@ public class UserDetailsDao {
      * @return User
      * @throws NotFoundException
      */
-    public User getUserByUsername(String userName) throws NotFoundException {
+    public User[] getUserByUsername(String userName) throws NotFoundException {
         log.info("Entering UserDetailsDao.getUserByUsername with parameter userName {}.", userName);
         try {
-            User user = restTemplate.getForObject(hostname + path + "?" +
-                    "userName=" + userName, User.class);
+            User[] user = restTemplate.getForObject(hostname + path + "?" +
+                    "userName=" + userName, User[].class);
             return user;
         } catch (Exception e) {
             throw new NotFoundException("User Not Found : userName = " + userName);

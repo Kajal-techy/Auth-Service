@@ -1,5 +1,6 @@
 jwt:
   secret: secretKey
+  issuer: Auth-Service
 hostname:
   userservice: http://localhost:9098
 path:
@@ -9,4 +10,5 @@ logging:
     com:
       userservice: DEBUG
     root: INFO
+
 
