@@ -1,6 +1,5 @@
 package com.authservice.authservice.config;
 
-import com.authservice.authservice.exception.Forbidden;
 import com.authservice.authservice.service.UserDetailsServiceImpl;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.slf4j.Slf4j;
@@ -22,9 +21,9 @@ import java.io.IOException;
 @Component
 public class AuthRequestFilter extends OncePerRequestFilter {
 
-    private UserDetailsServiceImpl userDetailsServiceImpl;
+    private final UserDetailsServiceImpl userDetailsServiceImpl;
 
-    private JwtTokenUtil jwtTokenUtil;
+    private final JwtTokenUtil jwtTokenUtil;
 
     @Autowired
     public AuthRequestFilter(UserDetailsServiceImpl userDetailsServiceImpl, JwtTokenUtil jwtTokenUtil) {
@@ -47,25 +46,19 @@ public class AuthRequestFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException, IllegalArgumentException, ExpiredJwtException {
         log.info("Entering AuthRequestFilter.doFilterInternal with parameters request {}, response {}, chain {}", request, response, chain);
-
         final String requestTokenHeader = request.getHeader("Authorization");
-
         String username = null;
         String jwtToken = null;
 
         if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
             jwtToken = requestTokenHeader.substring(7);
             username = jwtTokenUtil.getUsernameFromToken(jwtToken);
-        } else if (request.getRequestURI() != request.getRequestURI())
-            throw new Forbidden("Token is not started with Bearer");
+        }
 
         /* Once we get the token validate it. */
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-
             UserDetails userDetails = this.userDetailsServiceImpl.loadUserByUsername(username);
-
             if (jwtTokenUtil.validateToken(jwtToken, userDetails)) {
-
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities());
                 usernamePasswordAuthenticationToken

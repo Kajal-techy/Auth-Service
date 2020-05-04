@@ -13,6 +13,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,7 +21,7 @@ import java.util.stream.Collectors;
 @Repository
 public class UserDetailsDao {
 
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
 
     @Value("${hostname.userservice}")
     private String hostname;
@@ -42,31 +43,25 @@ public class UserDetailsDao {
     public List<User> getUserByUsername(String userName) throws NotFoundException {
         log.info("Entering UserDetailsDao.getUserByUsername with parameter userName {}.", userName);
         try {
-
             String url = hostname + path;
-
             UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(url)
                     .queryParam("userName", userName);
-
             HttpHeaders headers = new HttpHeaders();
-            headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-            HttpEntity<String> entity = new HttpEntity<String>(headers);
+            headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+            HttpEntity<String> entity = new HttpEntity<>(headers);
 
-            ResponseEntity responseEntity = restTemplate.exchange(
+            ResponseEntity<UserDto[]> responseEntity = restTemplate.exchange(
                     uriBuilder.toUriString(),
                     HttpMethod.GET,
                     entity,
                     UserDto[].class
             );
 
-            log.info("Response Entity" + responseEntity + "body = " + responseEntity.getBody().toString());
-
-            ArrayList<User> users = null;
+            List<User> users = new ArrayList<>();
 
             if (responseEntity.getBody() != null) {
-
-                UserDto[] userDtos = (UserDto[]) responseEntity.getBody();
-                users = (ArrayList<User>) Arrays.stream(userDtos).map(response -> {
+                UserDto[] userDtos = responseEntity.getBody();
+                users = Arrays.stream(userDtos).map(response -> {
                     checkNullOrEmpty(response.getId());
                     checkNullOrEmpty(response.getFirstName());
                     checkNullOrEmpty(response.getLastName());

@@ -14,7 +14,7 @@ import java.util.List;
 @Slf4j
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    private UserDetailsDao userDetailsDao;
+    private final UserDetailsDao userDetailsDao;
 
     public UserDetailsServiceImpl(UserDetailsDao userDetailsDao) {
         this.userDetailsDao = userDetailsDao;

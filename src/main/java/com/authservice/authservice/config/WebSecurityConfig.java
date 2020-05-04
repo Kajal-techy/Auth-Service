@@ -24,13 +24,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Slf4j
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private AuthServiceBeanInitializers authServiceBeanInitializers;
+    private final AuthServiceBeanInitializers authServiceBeanInitializers;
 
-    private UserDetailsService userDetailsService;
+    private final UserDetailsService userDetailsService;
 
-    private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
-    private AuthRequestFilter authRequestFilter;
+    private final AuthRequestFilter authRequestFilter;
 
     public WebSecurityConfig(UserDetailsService userDetailsService, JwtAuthenticationEntryPoint
             jwtAuthenticationEntryPoint, AuthServiceBeanInitializers authServiceBeanInitializers, AuthRequestFilter authRequestFilter) {
