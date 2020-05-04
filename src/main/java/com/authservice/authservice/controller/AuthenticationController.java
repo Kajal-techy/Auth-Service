@@ -48,7 +48,7 @@ public class AuthenticationController {
         log.info("Entering AuthenticationController.createAuthenticationToken with Parameter authenticationRequest {}.", authenticationRequest.toString());
         authenticate(authenticationRequest.getUserName(), authenticationRequest.getPassword());
         final UserDetails userDetails = userDetailsServiceImpl.loadUserByUsername(authenticationRequest.getUserName());
-        final String token = jwtTokenUtil.generateToken((User)userDetails);
+        final String token = jwtTokenUtil.generateToken((User) userDetails);
         return ResponseEntity.ok(new JWTResponse(token));
     }
 

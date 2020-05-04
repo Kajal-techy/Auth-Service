@@ -27,7 +27,7 @@ public class AuthRequestFilter extends OncePerRequestFilter {
     private JwtTokenUtil jwtTokenUtil;
 
     @Autowired
-    public AuthRequestFilter(UserDetailsServiceImpl userDetailsServiceImpl, JwtTokenUtil jwtTokenUtil ) {
+    public AuthRequestFilter(UserDetailsServiceImpl userDetailsServiceImpl, JwtTokenUtil jwtTokenUtil) {
         this.userDetailsServiceImpl = userDetailsServiceImpl;
         this.jwtTokenUtil = jwtTokenUtil;
     }
@@ -56,9 +56,8 @@ public class AuthRequestFilter extends OncePerRequestFilter {
         if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
             jwtToken = requestTokenHeader.substring(7);
             username = jwtTokenUtil.getUsernameFromToken(jwtToken);
-
-        } else
-            throw new Forbidden("Token is not starting with Bearer");
+        } else if (request.getRequestURI() != request.getRequestURI())
+            throw new Forbidden("Token is not started with Bearer");
 
         /* Once we get the token validate it. */
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
