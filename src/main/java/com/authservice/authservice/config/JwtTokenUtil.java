@@ -113,6 +113,13 @@ public class JwtTokenUtil {
         return expiration.before(new Date());
     }
 
+    /**
+     * This Function will validate the token with UserName, ExpiryDate and Issuer
+     *
+     * @param token
+     * @param userDetails
+     * @return
+     */
     public Boolean validateToken(String token, UserDetails userDetails) {
         String userNameToken = getUsernameFromToken(token);
         String userNameUserDetails = userDetails.getUsername();

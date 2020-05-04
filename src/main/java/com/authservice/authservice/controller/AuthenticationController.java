@@ -59,7 +59,7 @@ public class AuthenticationController {
      */
     @GetMapping("/validating-token")
     public ResponseEntity<AuthenticatedResponse> validatingToken(Authentication auth) {
-        com.authservice.authservice.model.User currentUser = (com.authservice.authservice.model.User) auth.getPrincipal();
+        User currentUser = (User) auth.getPrincipal();
         String loggedInUserId = User.loggedInUserIdBuilder().loggedInUserId(currentUser.getId()).build();
         return ResponseEntity.ok().body(new AuthenticatedResponse(loggedInUserId));
     }

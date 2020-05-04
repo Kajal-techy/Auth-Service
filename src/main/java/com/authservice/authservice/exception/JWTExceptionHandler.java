@@ -22,8 +22,8 @@ public class JWTExceptionHandler {
         return ResponseEntity.badRequest().body(exception.toString());
     }
 
-    @ExceptionHandler(value = Forbidden.class)
-    public ResponseEntity<String> forbiddenException(Forbidden exception) {
+    @ExceptionHandler(value = ForbiddenException.class)
+    public ResponseEntity<String> forbiddenException(ForbiddenException exception) {
         log.info("Entering UserExceptionHandler.forbiddenException with parameter exception {}.", exception);
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(exception.toString());
     }
