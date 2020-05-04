@@ -13,6 +13,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /* For creating one or ore new beans which need to be dealt at the runtime */
 @Configuration
@@ -23,17 +24,20 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 @Slf4j
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private AuthServiceBeanInitializers authServiceBeanInitializers;
+    private final AuthServiceBeanInitializers authServiceBeanInitializers;
 
-    private UserDetailsService userDetailsService;
+    private final UserDetailsService userDetailsService;
 
-    private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+
+    private final AuthRequestFilter authRequestFilter;
 
     public WebSecurityConfig(UserDetailsService userDetailsService, JwtAuthenticationEntryPoint
-            jwtAuthenticationEntryPoint, AuthServiceBeanInitializers authServiceBeanInitializers) {
+            jwtAuthenticationEntryPoint, AuthServiceBeanInitializers authServiceBeanInitializers, AuthRequestFilter authRequestFilter) {
         this.userDetailsService = userDetailsService;
         this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
         this.authServiceBeanInitializers = authServiceBeanInitializers;
+        this.authRequestFilter = authRequestFilter;
     }
 
     @Autowired
@@ -60,5 +64,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/v1/authenticate").permitAll().anyRequest()
                 .authenticated().and().exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+        /*
+         * Adds the filter before the position of the specified class
+         */
+        httpSecurity.addFilterBefore(authRequestFilter, UsernamePasswordAuthenticationFilter.class);
     }
 }

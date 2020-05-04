@@ -1,5 +1,7 @@
 package com.authservice.authservice.config;
 
+import com.authservice.authservice.model.AuthenticationFailureResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -31,6 +33,8 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         log.info("Entering JwtAuthenticationEntryPoint.commence with parameters request {}, response {}, authException {} ", request, response, authException);
         response.setContentType("application/json");
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response.getOutputStream().println("{\n" + " error :" + authException.getMessage() + "\n }");
+        AuthenticationFailureResponse auth = new AuthenticationFailureResponse(authException.getMessage(), 401);
+        ObjectMapper mapper = new ObjectMapper();
+        response.getOutputStream().println(mapper.writeValueAsString(auth));
     }
 }
