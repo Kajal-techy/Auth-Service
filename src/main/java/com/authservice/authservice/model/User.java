@@ -1,5 +1,6 @@
 package com.authservice.authservice.model;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -26,6 +27,11 @@ public class User extends org.springframework.security.core.userdetails.User {
         this.lastName = lastName;
         this.userName = userName;
         this.password = password;
+    }
+
+    @Builder(builderMethodName = "loggedInUserIdBuilder")
+    public static String getLoggedInUserId(String loggedInUserId) {
+        return loggedInUserId;
     }
 }
 

@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -47,8 +47,8 @@ public class AuthenticationController {
     public ResponseEntity<?> createAuthenticationToken(@RequestBody JWTRequest authenticationRequest) throws Exception {
         log.info("Entering AuthenticationController.createAuthenticationToken with Parameter authenticationRequest {}.", authenticationRequest.toString());
         authenticate(authenticationRequest.getUserName(), authenticationRequest.getPassword());
-        final User userDetails = userDetailsServiceImpl.loadUserDetails(authenticationRequest.getUserName());
-        final String token = jwtTokenUtil.generateToken(userDetails);
+        final UserDetails userDetails = userDetailsServiceImpl.loadUserByUsername(authenticationRequest.getUserName());
+        final String token = jwtTokenUtil.generateToken((User)userDetails);
         return ResponseEntity.ok(new JWTResponse(token));
     }
 
@@ -57,11 +57,11 @@ public class AuthenticationController {
      *
      * @return
      */
-    @GetMapping("/validating_token")
-    public ResponseEntity<AuthenticatedResponse> validatingToken() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User currentUser = (User) auth.getPrincipal();
-        return ResponseEntity.ok().body(new AuthenticatedResponse(currentUser.getId()));
+    @GetMapping("/validating-token")
+    public ResponseEntity<AuthenticatedResponse> validatingToken(Authentication auth) {
+        com.authservice.authservice.model.User currentUser = (com.authservice.authservice.model.User) auth.getPrincipal();
+        String loggedInUserId = User.loggedInUserIdBuilder().loggedInUserId(currentUser.getId()).build();
+        return ResponseEntity.ok().body(new AuthenticatedResponse(loggedInUserId));
     }
 
     /**

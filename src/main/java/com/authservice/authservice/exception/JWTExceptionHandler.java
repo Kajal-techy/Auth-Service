@@ -1,6 +1,7 @@
 package com.authservice.authservice.exception;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -19,6 +20,12 @@ public class JWTExceptionHandler {
     public ResponseEntity<String> dependencyFailedException(DependencyFailedException exception) {
         log.info("Entering UserExceptionHandler.dependencyFailedException with parameter exception {}.", exception);
         return ResponseEntity.badRequest().body(exception.toString());
+    }
+
+    @ExceptionHandler(value = Forbidden.class)
+    public ResponseEntity<String> forbiddenException(Forbidden exception) {
+        log.info("Entering UserExceptionHandler.forbiddenException with parameter exception {}.", exception);
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(exception.toString());
     }
 }
 

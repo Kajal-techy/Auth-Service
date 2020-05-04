@@ -1,5 +1,6 @@
 package com.authservice.authservice.config;
 
+import com.authservice.authservice.exception.Forbidden;
 import com.authservice.authservice.service.UserDetailsServiceImpl;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.slf4j.Slf4j;
@@ -20,11 +21,16 @@ import java.io.IOException;
 @Slf4j
 @Component
 public class AuthRequestFilter extends OncePerRequestFilter {
-    @Autowired
+
     private UserDetailsServiceImpl userDetailsServiceImpl;
 
-    @Autowired
     private JwtTokenUtil jwtTokenUtil;
+
+    @Autowired
+    public AuthRequestFilter(UserDetailsServiceImpl userDetailsServiceImpl, JwtTokenUtil jwtTokenUtil ) {
+        this.userDetailsServiceImpl = userDetailsServiceImpl;
+        this.jwtTokenUtil = jwtTokenUtil;
+    }
 
     /**
      * This function authenticate the request after request is intercepted by spring security interceptor
@@ -51,7 +57,8 @@ public class AuthRequestFilter extends OncePerRequestFilter {
             jwtToken = requestTokenHeader.substring(7);
             username = jwtTokenUtil.getUsernameFromToken(jwtToken);
 
-        }
+        } else
+            throw new Forbidden("Token is not starting with Bearer");
 
         /* Once we get the token validate it. */
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {

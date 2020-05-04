@@ -57,8 +57,6 @@ public class JwtTokenUtil {
                 .signWith(SignatureAlgorithm.HS512, secret).compact();
     }
 
-    /*   JWT token validation */
-
     /**
      * This function retrieve username from jwt token
      *
