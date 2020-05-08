@@ -5,15 +5,12 @@ import com.authservice.authservice.exception.NotFoundException;
 import com.authservice.authservice.model.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,7 +18,7 @@ import java.util.stream.Collectors;
 @Repository
 public class UserDetailsDao {
 
-    private final RestTemplate restTemplate;
+    private final UserServiceProxy userServiceProxy;
 
     @Value("${hostname.userservice}")
     private String hostname;
@@ -29,8 +26,8 @@ public class UserDetailsDao {
     @Value("${path.getUserByUserName}")
     private String path;
 
-    UserDetailsDao(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
+    UserDetailsDao(UserServiceProxy userServiceProxy) {
+        this.userServiceProxy = userServiceProxy;
     }
 
     /**
@@ -43,20 +40,7 @@ public class UserDetailsDao {
     public List<User> getUserByUsername(String userName) throws NotFoundException {
         log.info("Entering UserDetailsDao.getUserByUsername with parameter userName {}.", userName);
         try {
-            String url = hostname + path;
-            UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(url)
-                    .queryParam("userName", userName);
-            HttpHeaders headers = new HttpHeaders();
-            headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-            HttpEntity<String> entity = new HttpEntity<>(headers);
-
-            ResponseEntity<UserDto[]> responseEntity = restTemplate.exchange(
-                    uriBuilder.toUriString(),
-                    HttpMethod.GET,
-                    entity,
-                    UserDto[].class
-            );
-
+            ResponseEntity<UserDto[]> responseEntity = userServiceProxy.getUserDetails(userName);
             List<User> users = new ArrayList<>();
 
             if (responseEntity.getBody() != null) {
