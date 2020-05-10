@@ -24,11 +24,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/v1")
 public class AuthenticationController {
 
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
 
-    private JwtTokenUtil jwtTokenUtil;
+    private final JwtTokenUtil jwtTokenUtil;
 
-    private UserDetailsServiceImpl userDetailsServiceImpl;
+    private final UserDetailsServiceImpl userDetailsServiceImpl;
 
     public AuthenticationController(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, UserDetailsServiceImpl userDetailsServiceImpl) {
         this.authenticationManager = authenticationManager;
@@ -69,9 +69,8 @@ public class AuthenticationController {
      *
      * @param userName
      * @param password
-     * @throws Exception
      */
-    private void authenticate(String userName, String password) throws Exception {
+    private void authenticate(String userName, String password) {
         log.info("Entering AuthenticationController.authenticate with parameters userName {}", userName);
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userName, password));
     }
