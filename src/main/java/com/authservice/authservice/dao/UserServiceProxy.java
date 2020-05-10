@@ -7,8 +7,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @FeignClient("user-service")
 public interface UserServiceProxy {
+
     @GetMapping("/v1/users")
-    ResponseEntity<UserDto[]> getUserDetails(@RequestParam(value = "userName") String userName);
+    ResponseEntity<UserDto[]> getUserDetails(@RequestParam String userName);
 }
 
 
