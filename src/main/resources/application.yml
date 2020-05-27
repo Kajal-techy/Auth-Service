@@ -20,6 +20,9 @@ eureka:
       defaultZone: http://localhost:8761/eureka/
   instance:
     instanceId: ${spring.application.name}
-
-
-
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 80000000
+        readTimeout: 80000000

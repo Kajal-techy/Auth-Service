@@ -4,7 +4,6 @@ import com.authservice.authservice.exception.DependencyFailedException;
 import com.authservice.authservice.exception.NotFoundException;
 import com.authservice.authservice.model.User;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.HttpClientErrorException;
@@ -19,12 +18,6 @@ import java.util.stream.Collectors;
 public class UserDetailsDao {
 
     private final UserServiceProxy userServiceProxy;
-
-    @Value("${hostname.userservice}")
-    private String hostname;
-
-    @Value("${path.getUserByUserName}")
-    private String path;
 
     UserDetailsDao(UserServiceProxy userServiceProxy) {
         this.userServiceProxy = userServiceProxy;
