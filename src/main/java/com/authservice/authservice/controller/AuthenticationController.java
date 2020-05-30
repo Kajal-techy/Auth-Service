@@ -49,7 +49,7 @@ public class AuthenticationController {
         authenticate(authenticationRequest.getUserName(), authenticationRequest.getPassword());
         final UserDetails userDetails = userDetailsServiceImpl.loadUserByUsername(authenticationRequest.getUserName());
         final String token = jwtTokenUtil.generateToken((User) userDetails);
-        return ResponseEntity.ok(new JWTResponse(token));
+        return ResponseEntity.ok(new JWTResponse(token,((User) userDetails).getId()));
     }
 
     /**

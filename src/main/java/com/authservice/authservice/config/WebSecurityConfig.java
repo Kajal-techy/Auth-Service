@@ -61,7 +61,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         log.info("Entering WebSecurityConfig.configure with parameter httpSecurity {}.", httpSecurity);
         httpSecurity.csrf().disable().authorizeRequests()
-                .antMatchers("/v1/authenticate").permitAll().anyRequest()
+                .antMatchers("/v1/authenticate", "/v1/user").permitAll().anyRequest()
                 .authenticated().and().exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
