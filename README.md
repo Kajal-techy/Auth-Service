@@ -1,8 +1,7 @@
-API Gateway
+Auth Service
 ----------------
-This is a spring boot microservice which is built on top of **Zuul (Spring Cloud)** and is the backend for the frontend.
+This is a spring boot microservice which is powered by **Spring Security**.
   * This microservice registers and is discoverable via **Discover-Service (Eureka Server)**.
-  * It uses **Zuul** for routing and ribbon to route to the call to the designated micro-service.
-  * It has a filter which intercepts the request and checks for the authorization of the passed JWT Token.
-  * Authorizes calls based on the JWT token passed from the front-end, by ensuring its validity from Auth-Service
+  * It uses **Spring Security** to issue JWT token to valid users and has another endpoint to verify the token is authenticated.
+  * Calls User-Service using Feign Client, to fetch the logged-in User by username and password.
   * **AOP** is used for logging across application
